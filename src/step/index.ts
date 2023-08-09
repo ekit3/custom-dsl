@@ -1,26 +1,27 @@
-// a step is just a sentence/regex with a bound action
-// a Scenario is a pipeline of step that should be organized in a good order. (you are close to the goal, keep going)
 export abstract class Step {
+    public static keywords: Set<string> = new Set();
     templateSentence: string | RegExp;
     callback: Function;
 
     constructor(sentence: string | RegExp, callback: Function) {
         this.templateSentence = sentence;
         this.callback = callback;
+        Step.keywords.add(this.keyword);
+        Pipeline._stepRegistry[this.keyword?.toLowerCase()].push(this);
     }
 
     public get keyword(): string {
         return this.constructor.name;
     }
 
-    // Given user has [0-3] roles, (amountOfRoles) => {}
-    // Given user has 3 roles => (3) => {}
+    public abstract get keywordWeight(): number;
+
     public run(sentence: string): unknown {
         const args: unknown[] = [];
         const template = this.templateSentence.toString();
         const templates = [...this.extractFullRegexp(template), ...this.extractRangeRegExp(template)];
         for (const reg of templates) {
-            args.push(new RegExp(reg).exec(sentence));
+            args.push(new RegExp(reg).exec(sentence)?.[0]);
         }
         return this.callback(...args);
     }
@@ -36,7 +37,7 @@ export abstract class Step {
 
     public extractFullRegexp(source: string): string[] {
         const fullRegExp: string[] = [];
-        const iterator = source?.matchAll(/\(?\(((\()?[^(]*(\))?)+\)/g);
+        const iterator = source?.matchAll(/\(?\(((\()?[^(]+(\))?)+\)/g);
         for (const [scheme] of iterator){
             fullRegExp.push(scheme);
         }
@@ -45,6 +46,69 @@ export abstract class Step {
 
 }
 
-export class Given extends Step {}
-export class When extends Step {}
-export class Then extends Step {}
+export class Given extends Step {
+    get keywordWeight(): number {
+        return 0;
+    }
+}
+export class When extends Step {
+    get keywordWeight(): number {
+        return 1;
+    }
+}
+export class Then extends Step {
+    get keywordWeight(): number {
+        return 2;
+    }
+}
+
+export class Pipeline {
+    static _stepRegistry: { given: Given[], when: When[], then: Then[] } = {
+        given: [],
+        when: [],
+        then: []
+    };
+
+    public static run(feature: string): void {
+        const lines = feature.split(/\n/);
+        const pipe: Step[] = [];
+
+        for (const line of lines) {
+            const stepKeyword = this.inputIntegrity(line);
+            const step: Step = this.extractStep(line, stepKeyword);
+            const lastRun = pipe[pipe.length - 1];
+            if (lastRun?.keywordWeight > step.keywordWeight) {
+                throw new Error(`Cannot manage ${step.keyword} after ${lastRun.keyword}`);
+            }
+            try {
+                const result = step.run(line);
+                if (typeof result === 'boolean') {
+                    console.assert(result, `\x1b[31m -- ${line} - Failed \x1b[0m`)
+                }
+                console.log(`\x1b[32m -- ${line} - OK \x1b[0m`);
+            } catch (error: unknown) {
+                console.error(`\x1b[31m -- ${line} - Thrown \x1b[0m`);
+                throw error;
+            }
+
+            pipe.push(step);
+        }
+    }
+
+    public static inputIntegrity(line: string): string {
+        const stepKeyword = RegExp(Array.from(Step.keywords).join("|")).exec(line)?.[0].toLowerCase();
+        if (!stepKeyword) {
+            throw new TypeError(`"${line}" didn't use a known keyword to start`);
+        }
+        return stepKeyword;
+    }
+
+    public static extractStep(line: string, stepKeyword: string): Step {
+        return this._stepRegistry[stepKeyword].reduce((ret, step) => {
+            if (RegExp(step.templateSentence).exec(line.replaceAll(stepKeyword, "")?.trim())) {
+                return step;
+            }
+            return ret;
+        });
+    }
+}
