@@ -10,8 +10,8 @@ Run test with `npm run test` (WIP - do nothing right now)
 ## Examples
 Output examples :
 
-![img.png](readme_assets/img.png)
+![img.png](readme_assets/success.png)
 _Everything going well_ 
   
-![img_1.png](readme_assets/img_1.png)
+![img.png](readme_assets/failed.png)
 _Something goes bad_ 

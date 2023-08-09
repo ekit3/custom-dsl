@@ -92,6 +92,7 @@ export class Pipeline {
             const result = step.run(line);
             if (typeof result === 'boolean') {
                 console.assert(result, `\x1b[31m -- ${line} - Failed \x1b[0m`)
+                return;
             }
             console.log(`\x1b[32m -- ${line} - OK \x1b[0m`);
         } catch (error: unknown) {
