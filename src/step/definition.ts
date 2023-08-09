@@ -18,3 +18,7 @@ new When("she eats [0-3] cucumber", (amountOfCucumber: number) => {
 new Then("she will be (hungry|full)", (attr: string): boolean => {
     return alice[attr];
 });
+
+new Then("she will not be (hungry|full)", (attr: string): boolean => {
+    return !alice[attr];
+});
