@@ -77,25 +77,30 @@ export class Pipeline {
             const stepKeyword = this.inputIntegrity(line);
             const step: Step = this.extractStep(line, stepKeyword);
             const lastRun = pipe[pipe.length - 1];
+
             if (lastRun?.keywordWeight > step.keywordWeight) {
                 throw new Error(`Cannot manage ${step.keyword} after ${lastRun.keyword}`);
             }
-            try {
-                const result = step.run(line);
-                if (typeof result === 'boolean') {
-                    console.assert(result, `\x1b[31m -- ${line} - Failed \x1b[0m`)
-                }
-                console.log(`\x1b[32m -- ${line} - OK \x1b[0m`);
-            } catch (error: unknown) {
-                console.error(`\x1b[31m -- ${line} - Thrown \x1b[0m`);
-                throw error;
-            }
 
+            this.manageStepResult(step, line);
             pipe.push(step);
         }
     }
 
-    public static inputIntegrity(line: string): string {
+    private static manageStepResult(step: Step, line: string): void {
+        try {
+            const result = step.run(line);
+            if (typeof result === 'boolean') {
+                console.assert(result, `\x1b[31m -- ${line} - Failed \x1b[0m`)
+            }
+            console.log(`\x1b[32m -- ${line} - OK \x1b[0m`);
+        } catch (error: unknown) {
+            console.error(`\x1b[31m -- ${line} - Thrown \x1b[0m`);
+            throw error;
+        }
+    }
+
+    private static inputIntegrity(line: string): string {
         const stepKeyword = RegExp(Array.from(Step.keywords).join("|")).exec(line)?.[0].toLowerCase();
         if (!stepKeyword) {
             throw new TypeError(`"${line}" didn't use a known keyword to start`);
@@ -103,7 +108,7 @@ export class Pipeline {
         return stepKeyword;
     }
 
-    public static extractStep(line: string, stepKeyword: string): Step {
+    private static extractStep(line: string, stepKeyword: string): Step {
         return this._stepRegistry[stepKeyword].reduce((ret, step) => {
             if (RegExp(step.templateSentence).exec(line.replaceAll(stepKeyword, "")?.trim())) {
                 return step;
