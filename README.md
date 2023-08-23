@@ -21,7 +21,7 @@ Run test: `npm run test`
 ## Examples
 Output examples :
 
-_Everything going well_
+_Everything goes well_
 
 ![success.png](readme_assets/success.png)
 
