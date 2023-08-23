@@ -1,10 +1,17 @@
-import { Pipeline } from './step';
+console.time();
+import { Launcher } from './step';
 
 import './step/definition';
 
-const feature =
-`Given Alice is hungry
-When she eats 3 cucumber
-Then she will not be full`;
+const filePath: string | undefined = process.argv[2] ?? process.env["FEAT_PATH"];
 
-Pipeline.run(feature);
+if (filePath) {
+    void Launcher.run(filePath);
+    process.exitCode = 0;
+} else {
+    console.error('Missing target feat directory, provide it by argument or envvar "FEAT_PATH"');
+    process.exitCode = 1;
+}
+
+console.timeEnd();
+

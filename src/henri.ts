@@ -1,4 +1,4 @@
-export class Alice {
+export class Henri {
     hungry = false;
     full = false;
 
@@ -14,7 +14,7 @@ export class Alice {
         }
 
         console.log(`I've ate ${amount} delicious ${food} !`);
-        if (amount === 3 && food === 'cucumber')  {
+        if (amount === 3 && food === 'biscuit')  {
             this.full = true;
             console.log("Right now, I'm full - *pouf*");
         }

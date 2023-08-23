@@ -1,24 +1,50 @@
-import { Alice } from "../alice";
-import { Given, Then, When } from "./index";
+import { Henri } from "../henri";
+import { After, AfterAll, Before, BeforeAll, Given, Then, When } from "./index";
 
-const alice = new Alice();
+let henri: Henri;
 
-new Given("Alice is (hungry|full)", (attr: string) => {
-    alice[attr] = true;
+new BeforeAll(() => {
+   console.log("It starts soon !");
 });
 
-new Given("Alice is not (hungry|full)", (attr: string) => {
-    alice[attr] = false;
+new Before(() => {
+    henri = new Henri();
 });
 
-new When("she eats [0-3] cucumber", (amountOfCucumber: number) => {
-    alice.eat("cucumber", +amountOfCucumber);
+new Before(() => {
+    console.log("Henri is actually ready");
 });
 
-new Then("she will be (hungry|full)", (attr: string): boolean => {
-    return alice[attr];
+new Given("Henri is (hungry|full)", (attr: string) => {
+    henri[attr] = true;
 });
 
-new Then("she will not be (hungry|full)", (attr: string): boolean => {
-    return !alice[attr];
+new Given("Henri is not (hungry|full)", (attr: string) => {
+    henri[attr] = false;
 });
+
+new When("he eats [0-3] biscuit", (amountOfBiscuit: number) => {
+    henri.eat("biscuit", +amountOfBiscuit);
+});
+
+new Then("he will be (hungry|full)", (attr: string): boolean => {
+    return henri[attr];
+});
+
+new Then("he will not be (hungry|full)", (attr: string): boolean => {
+    return !henri[attr];
+});
+
+new After(() => {
+    console.log("Feel the happiness !");
+});
+
+new After(() => {
+    console.log("===============\n");
+});
+
+new AfterAll(() => {
+    console.log("Hope you've enjoyed the trip");
+});
+
+
