@@ -1,14 +1,14 @@
 Title: Henri travel the world to eat some biscuits (but failed)
-Given Henri is hungry
-When he eats 3 biscuit
-Then he will not be full
+    Given Henri is hungry
+    When he eats 3 biscuit
+    Then he will not be full
 
 Title: Henri travel the world to eat less biscuits (but failed)
-Given Henri is hungry
-When he eats 2 biscuit
-Then he will be full
+    Given Henri is hungry
+    When he eats 2 biscuit
+    Then he will be full
 
 Title: Henri travel the world to eat one biscuit (but failed)
-Given Henri is hungry
-When he eats 1 biscuit
-Then he will be full
+    Given Henri is hungry
+    When he eats 1 biscuit
+    Then he will be full
