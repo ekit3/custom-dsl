@@ -1,7 +1,7 @@
-console.time();
-import { Launcher } from './step';
+console.time('process-time');
+import { Launcher } from './core';
 
-import './step/definition';
+import './definition';
 
 const filePath: string | undefined = process.argv[2] ?? process.env["FEAT_PATH"];
 
@@ -13,5 +13,5 @@ if (filePath) {
     process.exitCode = 1;
 }
 
-console.timeEnd();
+console.timeEnd('process-time');
 

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "start-test": "node dist/index.js './test'",
-    "build": "rm -rf dist/ && tsc && cp -r ./test ./dist",
+    "build": "rm -rf dist/ && ncc build ./src/index.ts -q -m -o dist/",
     "test": "FEAT_PATH='./test' ts-node src/index.ts && echo 'if you want it run faster try (npm run) build before (npm) start'"
   },
   "keywords": [
@@ -17,6 +17,7 @@
   "dependencies": {
     "@types/async": "^3.2.20",
     "@types/node": "^20.4.9",
+    "@vercel/ncc": "^0.36.1",
     "async": "^3.2.4",
     "dotenv": "^16.3.1",
     "ts-node": "^10.9.1",

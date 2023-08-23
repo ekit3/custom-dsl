@@ -1,5 +1,5 @@
-import { Henri } from "../henri";
-import { After, AfterAll, Before, BeforeAll, Given, Then, When } from "./index";
+import { Henri } from "./henri";
+import { After, AfterAll, Before, BeforeAll, Given, Then, When } from "./core";
 
 let henri: Henri;
 
